@@ -1,0 +1,9 @@
+{
+  "text_dir": "./data/MVSA/data_new",
+  "img_region_dir": "./data/MVSA/photo_region",
+  "senti_dir": "./data/MVSA/sentiment.json",
+  "ANP_dir": "./DeepSentiBank/result/mvsa_photo_path.json",
+  "ANP_clss_dir": "./DeepSentiBank/classes.json",
+  "opinion_span_path": "./data/MVSA/opinion_spans_sentiwordnet.json",
+  "aspect_span_path": "./data/MVSA/aspect_spans.json"
+}
