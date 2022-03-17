@@ -402,57 +402,6 @@ class ConditionTokenizer:
         }
         return output
 
-    def encode_ae(self, label, aspect_spans, ae_max_len):
-        target_shift = len(self.mapping2targetid) + 2
-        ae_text = []
-        masks = []
-        gt_spans = []
-        for text, span in zip(label, aspect_spans):
-            word_bpes = [[self.begin_text_id]]
-            for word in text.split():
-                bpes = self._base_tokenizer.tokenize(word,
-                                                     add_prefix_space=True)
-                bpes = self._base_tokenizer.convert_tokens_to_ids(bpes)
-                word_bpes.append(bpes)
-            word_bpes.append([self.end_text_id])
-
-            lens = list(map(len, word_bpes))
-            cum_lens = np.cumsum(list(lens)).tolist()
-
-            cur_text = [
-                0, self.mapping2targetid['AE'], self.mapping2targetid['AE']
-            ]
-            mask = [0, 0, 1]
-
-            gt = []
-            for x in span:
-
-                s_bpe = cum_lens[x[0]] + target_shift
-                e_bpe = cum_lens[x[1]] + target_shift
-                cur_text.append(s_bpe)
-                cur_text.append(e_bpe)
-                gt.append((s_bpe, e_bpe))
-                mask.append(1)
-                mask.append(1)
-            cur_text.append(1)
-            mask.append(1)
-
-            ae_text.append(cur_text)
-            masks.append(mask)
-            gt_spans.append(gt)
-        span_max_len = max(len(x) for x in ae_text)
-        for i in range(len(masks)):
-            add_len = span_max_len - len(masks[i])
-            masks[i] = masks[i] + [0 for ss in range(add_len)]
-            ae_text[i] = ae_text[i] + [1 for ss in range(add_len)]
-        output = {}
-        output['labels'] = torch.tensor(ae_text)
-        output['masks'] = torch.tensor(masks)
-        output['spans'] = gt_spans
-        # output['AE_masks'][:, 2] = 1
-
-        return output
-
     def encode_aesc(self, label, aesc_spans, aesc_max_len):
         target_shift = len(self.mapping2targetid) + 2
         aesc_text = []

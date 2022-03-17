@@ -1,4 +1,4 @@
-for sl in  '8.5e-5'
+for sl in  '9.5e-5' '7.5e-5' '6e-5' '6.5e-5' '7e-5' '8e-5' '9e-5' '4e-5' '5e-5'
 do
 		echo ${sl}
 		python MAESC_training.py \

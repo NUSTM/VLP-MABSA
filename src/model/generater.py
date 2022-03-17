@@ -97,14 +97,9 @@ class SequenceGeneratorModel(nn.Module):
                                                  attention_mask)
         tgt_tokens = aesc_infos['labels'].to(input_ids.device)
         # print()
-        if self.sc_only:
-            result = self.generator.generate(state,
-                                             tokens=tgt_tokens[:, :3],
-                                             gt_tokens=tgt_tokens)
-        else:
-            result = self.generator.generate(
-                state, tokens=tgt_tokens[:, :3]
-            )  # the prompt is provided to the model
+        result = self.generator.generate(
+            state,
+            tokens=tgt_tokens[:, :3])  # the prompt is provided to the model
         return result
 
 
@@ -396,7 +391,6 @@ def _no_beam_search_generate(decoder: Seq2SeqDecoder,
     return token_ids
 
 
-
 def _beam_search_generate(decoder: Seq2SeqDecoder,
                           tokens=None,
                           state=None,
@@ -554,8 +548,6 @@ def _beam_search_generate(decoder: Seq2SeqDecoder,
                                           sorted=True)  # (bsz, 2*num_beams)
         from_which_beam = ids // vocab_size  # (batch_size, 2*num_beams)
         next_tokens = ids % vocab_size  # (batch_size, 2*num_beams)
-
-
 
         not_eos_mask = next_tokens.ne(_eos_token_id)  # 为1的地方不是eos
         keep_mask = not_eos_mask.cumsum(dim=1).le(num_beams)  # 为1的地方需要保留
