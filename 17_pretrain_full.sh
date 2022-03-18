@@ -13,7 +13,7 @@ do
           --epochs 35 \
           --grad_clip 5 \
           --warmup 0.1 \
-          --seed 66 \
+          --seed 55 \
           --checkpoint ../E2E-MABSA/ablation_checkpoint/2021-10-28-11-21-41/model40MLMMRMKLSentimentANP_generateAE_OE_split/pytorch_model.bin
           
 done

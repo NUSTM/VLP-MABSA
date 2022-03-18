@@ -155,26 +155,10 @@ class Collator:
                     [x['sentiment'] for x in batch])
                 output['task'] = 'Sentiment'
 
-            if self._anp_enabled:
-                output['ANP'] = self._tokenizer.encode_anp_dis(len(batch))
-                output['ANP']['ANP_dis'] = torch.from_numpy(
-                    np.array([x['ANP_dis'] for x in batch]))
-                output['task'] = 'ANP'
             if self._anp_generate_enabled:
                 output['ANP_generate'] = self._tokenizer.encode_anp_generate(
                     [x['ANP_words'] for x in batch])
                 output['task'] = 'ANP_generate'
-            if self._ae_enabled:
-                output['AE'] = self._tokenizer.encode_ae(
-                    target, [x['aspect_spans'] for x in batch],
-                    self._max_span_len)
-                output['task'] = 'AE'
-            if self._oe_enabled:
-
-                output['OE'] = self._tokenizer.encode_oe(
-                    target, [x['opinion_spans'] for x in batch],
-                    self._max_span_len)
-                output['task'] = 'OE'
             if self._aesc_enabled:
                 output['AESC'] = self._tokenizer.encode_aesc(
                     target, [x['aesc_spans'] for x in batch],

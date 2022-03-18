@@ -64,9 +64,8 @@ class MVSA_Dataset(data.Dataset):
 
     def get_img_ANP(self, idx):
         distribution = self.idx2ANP[idx]['bi-concepts']
-
-        dis = self.process_ANP_distribution(distribution)
         words = self.get_ANP_word(distribution)
+        dis = self.process_ANP_distribution(distribution)
 
         return dis, words
 

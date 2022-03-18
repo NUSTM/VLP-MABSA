@@ -190,7 +190,6 @@ class MultiModalBartDecoder_span(nn.Module
         # label_ids = sorted(label_ids, reverse=False)
         self.label_start_id = min(label_ids)
         self.label_end_id = max(label_ids) + 1
-        # 这里在pipe中设置了第0个位置是sos, 第一个位置是eos, 所以做一下映射。还需要把task_id给映射一下
         self.need_tag = need_tag
         self.only_sc = only_sc
         mapping = torch.LongTensor([0, 2] + label_ids)
@@ -353,8 +352,6 @@ class MultiModalBartDecoder_MLM(nn.Module):
             decoder_input_ids=decoder_input_ids,
             decoder_padding_mask=decoder_attention_mask,
             causal_mask_dtype=self.decoder.embed_tokens.weight.dtype)
-        # print(decoder_input_ids[0])
-        # print(decoder_padding_mask[0])
         decoder_outputs = self.decoder(
             decoder_input_ids,
             encoder_outputs,
@@ -372,7 +369,6 @@ class MultiModalBartDecoder_MLM(nn.Module):
         # compute lm loss if labels is given
         if labels is not None:
             labels = labels.clone()
-            # labels[labels == self.cls_token_id] = -100
             loss_fct = nn.CrossEntropyLoss()
             lm_loss = loss_fct(
                 lm_logits.view(-1, self.decoder.embed_tokens.weight.size(0)),
@@ -512,8 +508,7 @@ class MultiModalBartDecoder_MRM(nn.Module):
                                     mrm_labels.double().squeeze(1),
                                     reduction='batchmean')
             else:
-                mrm_labels = torch.argmax(mrm_labels.squeeze(1), dim=-1)
-                mrm_loss = loss_fct(predict_cls, mrm_labels)
+                raise RuntimeError("wrong mrm type")
         else:
             mrm_loss = 0
 

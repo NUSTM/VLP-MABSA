@@ -130,27 +130,12 @@ class ConditionTokenizer:
         print('self.bos_token_id', self.bos_token_id)
         print('self.eos_token_id', self.eos_token_id)
         print('self.pad_token_id', self.pad_token_id)
-        if args.task == 'twitter_sc':
-            self.mapping = {
-                'SC': '<<SC>>',
-                'POS': '<<POS>>',
-                'NEU': '<<NEU>>',
-                'NEG': '<<NEG>>'
-            }
-        elif args.task == 'twitter_ae':
-            self.mapping = {
-                'AE': '<<AE>>',
-                'POS': '<<POS>>',
-                'NEU': '<<NEU>>',
-                'NEG': '<<NEG>>'
-            }
-        else:
-            self.mapping = {
-                'AESC': '<<AESC>>',
-                'POS': '<<POS>>',
-                'NEU': '<<NEU>>',
-                'NEG': '<<NEG>>'
-            }
+        self.mapping = {
+            'AESC': '<<AESC>>',
+            'POS': '<<POS>>',
+            'NEU': '<<NEU>>',
+            'NEG': '<<NEG>>'
+        }
         self.senti = {'POS': '<<POS>>', 'NEU': '<<NEU>>', 'NEG': '<<NEG>>'}
         self.senti2id = {}
         for key, value in self.senti.items():

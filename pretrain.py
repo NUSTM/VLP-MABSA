@@ -13,7 +13,7 @@ from torch.utils.tensorboard import SummaryWriter
 from transformers import AdamW
 import random
 from src.data.collation import Collator
-from src.data.dataset import MVSA_Dataset, POS_NEG_Dataset
+from src.data.dataset import MVSA_Dataset
 from src.data.tokenization_new import ConditionTokenizer
 from src.model.config import MultiModalBartConfig
 from src.model.model import MultiModalBartModelForPretrain
@@ -24,13 +24,6 @@ DATASET_NAMES = ('MVSA', )
 
 
 def main(rank, args):
-    # ============ logging, initialization and directories ==============
-
-    # if not args.cpu:
-    #     setup_process(rank, args.gpu_num, master_port=args.master_port)
-
-    # if not args.cpu:
-    #     setup_process(rank, args.gpu_num, master_port=args.master_port)
 
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     checkpoint_path = os.path.join(args.checkpoint_dir, timestamp)
@@ -65,11 +58,10 @@ def main(rank, args):
         device = torch.device("cuda:{}".format(rank))
         map_location = {'cuda:%d' % 0: 'cuda:%d' % rank}
 
-    tokenizer = ConditionTokenizer()
+    tokenizer = ConditionTokenizer(args)
     label_ids = list(tokenizer.mapping2id.values())
     senti_ids = list(tokenizer.senti2id.values())
-    print(senti_ids)
-    print(tokenizer._base_tokenizer.convert_ids_to_tokens(senti_ids))
+
     if args.model_config is not None:
         bart_config = MultiModalBartConfig.from_dict(
             json.load(open(args.model_config)))
@@ -102,31 +94,11 @@ def main(rank, args):
 
     model.to(device)
 
-    # if not args.cpu:
-    #     torch.cuda.set_device(rank)
-    #     model = DDP(model, device_ids=[rank], find_unused_parameters=True)
     optimizer = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_mlm = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_senti = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_ANP = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_ae = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_oe = AdamW(model.parameters(), lr=args.lr)
-    # optimizer_dict = {
-    #     'MLM': optimizer_mlm,
-    #     'Sentiment': optimizer_senti,
-    #     'ANP': optimizer_ANP,
-    #     'AE': optimizer_ae,
-    #     'OE': optimizer_oe
-    # }
+
     scaler = GradScaler() if args.amp else None
 
     epoch = 0
-    # if args.continue_training:
-    #     epoch = load_training_data(args.checkpoint,
-    #                                optimizer=optimizer,
-    #                                scaler=scaler,
-    #                                map_location=map_location)['epoch'] + 1
-
     # =========================== data =============================
 
     logger.info('Loading data...')
@@ -159,13 +131,6 @@ def main(rank, args):
                              aesc_enabled=False,
                              anp_enabled=False)
 
-    collate_anp = Collator(tokenizer,
-                           mlm_enabled=False,
-                           senti_enabled=False,
-                           ae_enabled=False,
-                           oe_enabled=False,
-                           aesc_enabled=False,
-                           anp_enabled=True)
     collate_anp_generate = Collator(tokenizer,
                                     mlm_enabled=False,
                                     senti_enabled=False,
@@ -174,20 +139,6 @@ def main(rank, args):
                                     aesc_enabled=False,
                                     anp_enabled=False,
                                     anp_generate_enabled=True)
-    collate_ae = Collator(tokenizer,
-                          mlm_enabled=False,
-                          senti_enabled=False,
-                          ae_enabled=True,
-                          oe_enabled=False,
-                          aesc_enabled=False,
-                          anp_enabled=False)
-    collate_oe = Collator(tokenizer,
-                          mlm_enabled=False,
-                          senti_enabled=False,
-                          ae_enabled=False,
-                          oe_enabled=True,
-                          aesc_enabled=False,
-                          anp_enabled=False)
     collate_ae_oe = Collator(tokenizer,
                              mlm_enabled=False,
                              senti_enabled=False,
@@ -211,18 +162,14 @@ def main(rank, args):
     # train_sampler = DistributedSampler(train_dataset,
     #                                    num_replicas=args.gpu_num,
     #                                    rank=rank)
-    task_type = [
-        'MLM', 'MRM', 'Sentiment', 'ANP_dis', 'ANP_generate', 'AE', 'OE',
-        'AE_OE'
-    ]
+    task_type = ['MLM', 'MRM', 'Sentiment', 'ANP_generate', 'AE_OE']
     task_enbled = [
         args.mlm_enabled, args.mrm_enabled, args.senti_enabled,
-        args.anp_enabled, args.anp_generate_enabled, args.ae_enabled,
-        args.oe_enabled, args.ae_oe_enabled
+        args.anp_generate_enabled, args.ae_oe_enabled
     ]
     collate_list = [
-        collate_mlm, collate_mrm, collate_senti, collate_anp,
-        collate_anp_generate, collate_ae, collate_oe, collate_ae_oe
+        collate_mlm, collate_mrm, collate_senti, collate_anp_generate,
+        collate_ae_oe
     ]
 
     start = datetime.now()
@@ -231,21 +178,7 @@ def main(rank, args):
 
     logger.info('Start training', pad=True)
     scaler = GradScaler() if args.amp else None
-    # task_list_pos_neg = []
-    # train_loaders_pos_neg = []
-    # for ty, enable, collate_t in zip(task_type, task_enbled, collate_list):
-    #     if ty == 'Sentiment':
-    #         continue
-    #     if enable:
-    #         task_list_pos_neg.append(ty)
-    #         loader = DataLoader(dataset=pos_neg_data,
-    #                             batch_size=args.batch_size,
-    #                             shuffle=True,
-    #                             num_workers=args.num_workers,
-    #                             pin_memory=True,
-    #                             collate_fn=collate_t)
-    #         train_loaders_pos_neg.append(loader)
-    # task_list_mvsa = []
+
     train_loaders_mvsa = []
     for ty, enable, collate_t in zip(task_type, task_enbled, collate_list):
         if enable:
@@ -257,51 +190,16 @@ def main(rank, args):
                                 pin_memory=True,
                                 collate_fn=collate_t)
             train_loaders_mvsa.append(loader)
-    # task_list = task_list_pos_neg + task_list_mvsa
-    # train_loaders = train_loaders_pos_neg + train_loaders_mvsa
-    # all_dataset = ConcatDataset([MVSA_data])
+
     task_list = []
     train_loaders = []
     xx_flag = True
     add_model_name = ''
-    for ty, enable in zip(task_type, task_enbled):
-        if not enable:
-            xx_flag = False
-        else:
-            if ty == 'ANP_dis':
-                add_model_name += ty + args.ANP_loss_type
-            elif ty == 'MRM':
-                add_model_name += ty + args.mrm_loss_type
-            else:
-                add_model_name += ty
-    # if xx_flag:
-    #     add_model_name = 'full'
 
     for ty, enable, collate_t in zip(task_type, task_enbled, collate_list):
         if enable:
             # add_model_name += ty
             task_list.append(ty)
-            # loader = DataLoader(dataset=all_dataset,
-            #                     batch_size=args.batch_size,
-            #                     shuffle=True,
-            #                     num_workers=args.num_workers,
-            #                     pin_memory=True,
-            #                     collate_fn=collate_t)
-            # train_loaders.append(loader)
-    # collate_full = Collator(tokenizer,
-    #                         is_mlm=True,
-    #                         mlm_enabled=True,
-    #                         senti_enabled=True,
-    #                         ae_enabled=True,
-    #                         oe_enabled=True,
-    #                         aesc_enabled=False,
-    #                         anp_enabled=True)
-    # train_loaders = DataLoader(dataset=all_dataset,
-    #                            batch_size=args.batch_size,
-    #                            shuffle=True,
-    #                            num_workers=args.num_workers,
-    #                            pin_memory=True,
-    #                            collate_fn=collate_full)
     epoch = 0
     while epoch < args.epochs:
         logger.info('Epoch {}'.format(epoch + 1), pad=True)
@@ -326,8 +224,7 @@ def main(rank, args):
                     checkpoint_path, 'model{}random_again'.format(epoch))
             else:
                 current_checkpoint_path = os.path.join(
-                    checkpoint_path,
-                    ('model{}' + add_model_name + '_split').format(epoch))
+                    checkpoint_path, ('model{}').format(epoch))
             if args.cpu:
                 model.save_pretrained(current_checkpoint_path)
             else:
@@ -340,41 +237,6 @@ def main(rank, args):
 
         epoch += 1
     logger.info("Finish pretraining  " + str(datetime.now() - start), pad=True)
-
-    epoch = 0
-    # while epoch < args.epochs:
-    #     logger.info('Epoch {}'.format(epoch + 1), pad=True)
-
-    #     pretrain(task_list=task_list,
-    #              epoch=epoch,
-    #              model=model,
-    #              train_loaders=train_loaders,
-    #              optimizer_dict=optimizer,
-    #              args=args,
-    #              device=device,
-    #              logger=logger,
-    #              log_interval=1,
-    #              tb_writer=tb_writer,
-    #              tb_interval=1,
-    #              scaler=scaler)
-
-    #     # save checkpoint
-    #     if epoch % args.checkpoint_every == 0:
-    #         current_checkpoint_path = os.path.join(
-    #             checkpoint_path, 'model{}pos_neg-MVSA'.format(epoch))
-    #         if args.cpu:
-    #             model.save_pretrained(current_checkpoint_path)
-    #         else:
-    #             model.save_pretrained(current_checkpoint_path)
-    #         save_training_data(path=current_checkpoint_path,
-    #                            optimizer=optimizer,
-    #                            scaler=scaler,
-    #                            epoch=epoch)
-    #         logger.info('Saved checkpoint at "{}"'.format(checkpoint_path))
-
-    #     epoch += 1
-    # logger.info("Training complete in: " + str(datetime.now() - start),
-    #             pad=True)
 
     if not args.cpu:
         cleanup_process()
@@ -401,7 +263,7 @@ def parse_args():
                         help='bart pretrain model')
 
     parser.add_argument('--checkpoint_every',
-                        default=10,
+                        default=40,
                         type=int,
                         help='checkpoint_every')
 
