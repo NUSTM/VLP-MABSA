@@ -15,7 +15,7 @@ ylin@njust.edu.cn
 - 
 ## Main Task
 To Train the JMASA task on two twitter datasets, you can just run the following code.
-'''python
-sh 15_pretrain_full.sh
-sh 17_pretrain_full.sh
-'''
+  '''python
+  sh 15_pretrain_full.sh
+  sh 17_pretrain_full.sh
+  '''
