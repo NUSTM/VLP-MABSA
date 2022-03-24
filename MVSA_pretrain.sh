@@ -9,4 +9,5 @@ python pretrain.py \
           --ae_oe_enabled 1 \
           --log_dir logs \
           --epochs 41 \
-          --mrm_loss_type KL
+          --mrm_loss_type KL \
+          --task pretrain

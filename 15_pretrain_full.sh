@@ -1,4 +1,4 @@
-for sl in  '9.5e-5' '7.5e-5' '6e-5' '6.5e-5' '7e-5' '8e-5' '9e-5' '4e-5' '5e-5'
+for sl in  '7e-5'#You can change the sl to find the best hyperparameter.
 do
 		echo ${sl}
 		python MAESC_training.py \
@@ -14,6 +14,5 @@ do
           --grad_clip 5 \
           --warmup 0.1 \
           --seed 66 \
-          --checkpoint ../E2E-MABSA/ablation_checkpoint/2021-10-28-11-21-41/model40MLMMRMKLSentimentANP_generateAE_OE_split/pytorch_model.bin
-          
+          --checkpoint ./checkpoint/pytorch_model.bin
 done

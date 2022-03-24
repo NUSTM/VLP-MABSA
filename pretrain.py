@@ -444,6 +444,7 @@ def parse_args():
                         default='KL',
                         help='mrm_loss_type')
     parser.add_argument('--bart_init', type=int, default=1, help='bart_init')
+    parser.add_argument('--task', type=str, default='', help='task type')
     # parser.set_defau  lts()
     args = parser.parse_args()
 

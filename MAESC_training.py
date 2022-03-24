@@ -32,22 +32,6 @@ def main(rank, args):
     checkpoint_path = os.path.join(args.checkpoint_dir, timestamp)
     tb_writer = None
     add_name = ''
-    # add_name = 'epoch_num' + str(args.epochs)
-    # add_name += 'last'
-
-    # if args.is_sample:
-    #     add_name += 'sample_num' + str(args.sample_num)
-    #     add_name += 'start_idx' + str(args.start_idx)
-    # if args.text_only:
-    #     add_name += ' only text'
-    # else:
-    #     add_name += ' multi'
-    # if args.bart_init == 0:
-    #     add_name += '_random_init_'
-    # if args.checkpoint:
-    #     add_name = add_name + '-pretrain' + args.checkpoint.split('/')[-2]
-
-    # add_name = add_name + str(args.lr)
     log_dir = os.path.join(args.log_dir, timestamp + add_name)
 
     # make log dir and tensorboard writer if log_dir is specified

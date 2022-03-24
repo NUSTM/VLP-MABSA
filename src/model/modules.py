@@ -432,6 +432,9 @@ class MultiModalBartDecoder_sentiment(nn.Module):  #MSP task
         self.decoder = decoder
         self.senti_ids = senti_ids
         self.dropout_layer = nn.Dropout(0.1)
+        self.senti_head = BartClassificationHead(config.d_model,
+                                                 config.d_model, senti_nums,
+                                                 config.classif_dropout)
 
     def _init_weights(self, module):
         module.weight.data.normal_(mean=0.0, std=0.02)
@@ -449,12 +452,13 @@ class MultiModalBartDecoder_sentiment(nn.Module):  #MSP task
             decoder_causal_mask=None,
         )
 
-        predict_senti = F.linear(
-            decoder_outputs[0][:, 1],
-            self.dropout_layer(self.decoder.embed_tokens.
-                               weight[self.senti_ids[0]:self.senti_ids[2] +
-                                      1]))  # bsz
-        predict_senti = torch.flip(predict_senti, dims=[-1])
+        # predict_senti = F.linear(
+        #     decoder_outputs[0][:, 1],
+        #     self.dropout_layer(self.decoder.embed_tokens.
+        #                        weight[self.senti_ids[0]:self.senti_ids[2] +
+        #                               1]))  # bsz
+        # predict_senti = torch.flip(predict_senti, dims=[-1])
+        predict_senti = self.senti_head(decoder_outputs[0][:, 1])
         loss_fct = nn.CrossEntropyLoss()
         senti_loss = loss_fct(predict_senti, senti_labels)
         return senti_loss, predict_senti

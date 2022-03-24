@@ -116,7 +116,8 @@ class MVSA_Dataset(data.Dataset):
         opinion_spans = self.get_opinion_spans(data_id)
         output['opinion_spans'] = opinion_spans
         output['cls'] = self.get_cls(data_id)
-
+        output['image_id'] = data_id
+        output['gt'] = None
         return output
 
 
