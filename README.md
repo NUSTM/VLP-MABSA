@@ -13,6 +13,11 @@ The pre-training dataset we use is MVSA-Multi. You can get from this [git](https
 - For images in MVSA-Multi dataset, we first perform [Faster-RCNN](https://github.com/jiasenlu/bottom-up-attention) to extract the region feature(only retain 36 regions with highest Confidence) as the input feature. Then we use [ANPs extractor](https://github.com/stephen-pilli/DeepSentiBank) to extract the ANPs distribution of each image.
 ## Data Download
 Because the pre-training dataset after processing is very large, we only provide the downstream datasets. You can download the downstream datasets and our pre-training model via the link [Baidu Netdist](https://pan.baidu.com/s/11INRcFpoBR-6iggukx1VtA) with code:d0tn.
+## Pre-Training
+If you have done all the processing above, you can perform the pre-training by running the code as follows.
+···
+sh MVSA_pretrain.sh
+···
 ## Downstream Task Training
 To Train the downstream JMASA task on two twitter datasets, you can just run the following code. Note that you need to change all the file path in file **src\data\jsons\twitter15_info.json** and **src\data\jsons\twitter17_info.json** to your own path.
 ```
