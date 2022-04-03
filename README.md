@@ -12,7 +12,7 @@ The pre-training dataset we use is MVSA-Multi. You can get from this [git](https
 - For texts in MVSA-Multi dataset, we first use [twitter_nlp](https://github.com/aritter/twitter_nlp) to perform Named Entity Recognition in order to find the aspects. Then, we use the sentiment lexicon [sentiwordnet](https://github.com/zeeeyang/lexicon_rnn/tree/master/lexicons) to matching the opinion words.
 - For images in MVSA-Multi dataset, we first perform [Faster-RCNN](https://github.com/jiasenlu/bottom-up-attention) to extract the region feature(only retain 36 regions with highest Confidence) as the input feature. Then we use [ANPs extractor](https://github.com/stephen-pilli/DeepSentiBank) to extract the ANPs distribution of each image.
 
-For more details, we provide the description of our pre-training data files in **descriptions.txt**
+For more details, we provide the description of our pre-training data files in **src/data/jsons/descriptions.txt** which explains the files defined in **MVSA.json**.
 ## Data Download
 Because the pre-training dataset after processing is very large, we only provide the downstream datasets. You can download the downstream datasets and our pre-training model via the link [Baidu Netdist](https://pan.baidu.com/s/11INRcFpoBR-6iggukx1VtA) with code:d0tn.
 ## Pre-Training
