@@ -15,9 +15,9 @@ The pre-training dataset we use is MVSA-Multi. You can get from this [git](https
 Because the pre-training dataset after processing is very large, we only provide the downstream datasets. You can download the downstream datasets and our pre-training model via the link [Baidu Netdist](https://pan.baidu.com/s/11INRcFpoBR-6iggukx1VtA) with code:d0tn.
 ## Pre-Training
 If you have done all the processing above, you can perform the pre-training by running the code as follows.
-···
+```
 sh MVSA_pretrain.sh
-···
+```
 ## Downstream Task Training
 To Train the downstream JMASA task on two twitter datasets, you can just run the following code. Note that you need to change all the file path in file **src\data\jsons\twitter15_info.json** and **src\data\jsons\twitter17_info.json** to your own path.
 ```
