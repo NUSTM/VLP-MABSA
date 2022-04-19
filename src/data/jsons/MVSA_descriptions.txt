@@ -1,0 +1,7 @@
+"text_dir": "../data/MVSA/data_new"                                                            # the folder of text after tokenizing through NLTK
+"img_region_dir": "../data/MVSA/photo_region"                                         # the folder of Faster-RCNN features. e.g., att/xxxx.npz
+"senti_dir": "../data/MVSA/sentiment.json"                                                  # dict of the sentiment of each text_id. e.g.,{'xxx':2,...}   0,1,2 denote negative, neutral, positive respectivaly.
+"ANP_dir": "../DeepSentiBank/mvsa_photo_path.json"                                # results of the ANPs extractor(DeepSentiBank). Note that we sort the list of picture paths before running DeepSentiBank.
+"ANP_clss_dir": "../DeepSentiBank/classes.json"                                          # the class dict of ANPs set which is provided by DeepSentiBank
+"opinion_span_path": "../data/MVSA/opinion_spans_sentiwordnet.json"   # the opinion spans through sentiment lexicon matching. e.g., for text "The game is great!" the span dic is {"2499": {"opinion_spans": [[4, 4]], "opinion_texts": [["great"]]}
+"aspect_span_path": "../data/MVSA/aspect_spans.json"                             # the aspect spans throuth NER. e.g., for text "Stephen Curry won the game!" the span dic is {"0": {"aspect_spans": [[0,1]], "asepct_texts": [["Stephen Curry"]]}

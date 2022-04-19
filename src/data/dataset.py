@@ -21,8 +21,8 @@ class MVSA_Dataset(data.Dataset):
         self.opinion_span_dict = json.load(
             open(infos['opinion_span_path'], 'r'))
         self.ANP_dir = infos['ANP_dir']
-        self.ANP_clss_dir = infos['ANP_clss_dir']
-        self.ANP_class = json.load(open(self.ANP_clss_dir, 'r'))
+        self.ANP_class_dir = infos['ANP_class_dir']
+        self.ANP_class = json.load(open(self.ANP_class_dir, 'r'))
         self.ANP_class = {i: anp for i, anp in enumerate(self.ANP_class)}
         self.ANP2idx = {anp: idx for idx, anp in self.ANP_class.items()}
         self.ANP_len = len(self.ANP_class)

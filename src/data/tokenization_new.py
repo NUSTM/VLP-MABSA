@@ -133,9 +133,7 @@ class ConditionTokenizer:
         if args.task == 'pretrain':
             self.mapping = {
                 'AE_OE': '<<AE_OE>>',
-                'SEP': '<<SEP>>',
-                'NEU': '<<NEU>>',
-                'NEG': '<<NEG>>'
+                'SEP': '<<SEP>>'
             }
         else:
             self.mapping = {

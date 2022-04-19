@@ -1,6 +1,6 @@
 python pretrain.py \
           --dataset MVSA ./src/data/jsons/MVSA_info.json \
-          --checkpoint_dir ./E2E-MABSA/ablation_checkpoint \
+          --checkpoint_dir ./checkpoint \
           --model_config config/pretrain_base.json \
           --mlm_enabled 1 \
           --mrm_enabled 1 \
