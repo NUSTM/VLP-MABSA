@@ -28,10 +28,8 @@ class ConditionTokenizer:
                  img_feat='<<img_feat>>',
                  begin_img="<<img>>",
                  end_img="<</img>>",
-                 ae_token='<<AE>>',
-                 oe_token='<<OE>>',
                  sc_token='<<SC>>',
-                 ae_oe_token="<<AE_OE>>",
+                 ae_oe_token="<<AOE>>",
                  sep_token="<<SEP>>",
                  aesc_token='<<AESC>>',
                  pos_token='<<POS>>',
@@ -39,12 +37,7 @@ class ConditionTokenizer:
                  neg_token='<<NEG>>',
                  senti_token='<<senti>>',
                  ANP_token='<<ANP>>',
-                 ANP_generate_token='<<ANP_generate>>',
-                 MNER_token='<<MNER>>',
-                 PER_token='<<PER>>',
-                 LOC_token='<<LOC>>',
-                 ORG_token='<<ORG>>',
-                 OTHER_token='<<OTHER>>'):
+                 ANP_generate_token='<<AOG>>'):
         # self._base_tokenizer = BartTokenizer.from_pretrained(
         #     pretrained_model_name, )
         self._base_tokenizer = AutoTokenizer.from_pretrained(
@@ -53,9 +46,8 @@ class ConditionTokenizer:
         self.additional_special_tokens = [
             cls_token, mlm_token, mrm_token, begin_text, end_text, img_feat,
             begin_img, end_img, senti_token, ANP_token, ANP_generate_token,
-            pos_token, neu_token, neg_token, PER_token, LOC_token, ORG_token,
-            OTHER_token, MNER_token, ae_token, oe_token, ae_oe_token,
-            sep_token, aesc_token, sc_token
+            pos_token, neu_token, neg_token, ae_oe_token, sep_token,
+            aesc_token, sc_token
         ]
         unique_no_split_tokens = self._base_tokenizer.unique_no_split_tokens
         self._base_tokenizer.unique_no_split_tokens = unique_no_split_tokens + self.additional_special_tokens
@@ -70,8 +62,7 @@ class ConditionTokenizer:
         self.img_feat = img_feat
         self.begin_img = begin_img
         self.end_img = end_img
-        self.ae_token = ae_token
-        self.oe_token = oe_token
+
         self.sc_token = sc_token
         self.ae_oe_token = ae_oe_token
         self.sep_token = sep_token
@@ -83,11 +74,6 @@ class ConditionTokenizer:
         self.pos_token = pos_token
         self.neu_token = neu_token
         self.neg_token = neg_token
-        self.MNER_token = MNER_token
-        self.PER_token = PER_token
-        self.LOC_token = LOC_token
-        self.ORG_token = ORG_token
-        self.OTHER_token = OTHER_token
 
         self.cls_token_id = self.convert_tokens_to_ids(cls_token)
         self.mlm_token_id = self.convert_tokens_to_ids(mlm_token)
@@ -97,8 +83,7 @@ class ConditionTokenizer:
         self.img_feat_id = self.convert_tokens_to_ids(img_feat)
         self.begin_img_id = self.convert_tokens_to_ids(begin_img)
         self.end_img_id = self.convert_tokens_to_ids(end_img)
-        self.ae_token_id = self.convert_tokens_to_ids(ae_token)
-        self.oe_token_id = self.convert_tokens_to_ids(oe_token)
+
         self.sc_token_id = self.convert_tokens_to_ids(sc_token)
         self.ae_oe_token_id = self.convert_tokens_to_ids(ae_oe_token)
         self.sep_token_id = self.convert_tokens_to_ids(sep_token)
@@ -110,11 +95,6 @@ class ConditionTokenizer:
         self.pos_token_id = self.convert_tokens_to_ids(pos_token)
         self.neu_token_id = self.convert_tokens_to_ids(neu_token)
         self.neg_token_id = self.convert_tokens_to_ids(neg_token)
-        self.MNER_token_id = self.convert_tokens_to_ids(MNER_token)
-        self.PER_token_id = self.convert_tokens_to_ids(PER_token)
-        self.LOC_token_id = self.convert_tokens_to_ids(LOC_token)
-        self.ORG_token_id = self.convert_tokens_to_ids(ORG_token)
-        self.OTHER_token_id = self.convert_tokens_to_ids(OTHER_token)
 
         self.vocab_size = self._base_tokenizer.vocab_size
         self.bos_token = self._base_tokenizer.bos_token
@@ -131,10 +111,7 @@ class ConditionTokenizer:
         print('self.eos_token_id', self.eos_token_id)
         print('self.pad_token_id', self.pad_token_id)
         if args.task == 'pretrain':
-            self.mapping = {
-                'AE_OE': '<<AE_OE>>',
-                'SEP': '<<SEP>>'
-            }
+            self.mapping = {'AE_OE': '<<AOE>>', 'SEP': '<<SEP>>'}
         else:
             self.mapping = {
                 'AESC': '<<AESC>>',
