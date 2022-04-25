@@ -86,7 +86,7 @@ To Train the downstream JMASA task on two twitter datasets, you can just run the
 sh 15_pretrain_full.sh
 sh 17_pretrain_full.sh
 ```
-The following is the description of spome parameters of the above shell
+The following is the description of some parameters of the above shell
 ```
 --dataset           include dataset name and the path of info json file.
 --checkpoint_dir    path to save your training model
