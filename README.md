@@ -1,5 +1,5 @@
 # Vision-Language Pre-Training for Multimodal Aspect-Based Sentiment Analysis(VLP-MABSA)
-Codes and datasets for our ACL'2022 paper:[Vision-Language Pre-Training for Multimodal Aspect-Based Sentiment Analysis](https://arxiv.org/abs/2204.07955)
+Codes and datasets for our ACL'2022 paper:[Vision-Language Pre-Training for Multimodal Aspect-Based Sentiment Analysis](https://aclanthology.org/2022.acl-long.152/)
 
 Author
 
