@@ -95,4 +95,4 @@ The following is the description of some parameters of the above shell
 ```
 We also provide our training logs on two datasets in folder **./log**.  
 ## Acknowledgements
-- Some codes are based on the codes of [BARTABSA](https://github.com/yhcc/BARTABSA) and [KM-BART](https://github.com/FomalhautB/KM-BART).
+- Some codes are based on the codes of [BARTABSA](https://github.com/yhcc/BARTABSA) and [KM-BART](https://github.com/FomalhautB/KM-BART), many thanks!
