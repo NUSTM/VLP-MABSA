@@ -18,7 +18,7 @@ For example, given the text "It is unbelievable ! Stephen Curry won the game !".
 ```
 It/O is/O unbelievable/O !/O Stephen/B-ENTITY Curry/I-ENTITY won/O the/O game/O !/O
 ```
-We save the result in a dict with the follwing formant
+We save the result in a dict with the following format
 ```
 {"text_id":{"aspect_spans":[list of aspect spans],"aspect_texts":[list of aspect texts]},...}
 {"100":{"aspect_spans":[[4,5]],"aspect_texts":[["Stephen","Curry"]},...}
