@@ -8,7 +8,7 @@ Yan Ling
 ylin@njust.edu.cn
 
 ## Data Processing
-The pre-training dataset we use is MVSA-Multi. You can get from this [git](https://github.com/xunan0812/MultiSentiNet). 
+The pre-training dataset we use is MVSA-Multi. You can get from this [git](https://github.com/xunan0812/MultiSentiNet). At first, you need to use the judgement rules provided by the git to remove the samples with inconsistent labels.
 ### Text Processing
 For texts in MVSA-Multi dataset, we first use NLTK to perform the tokenization.
 - How to obtain aspects
