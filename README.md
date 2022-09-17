@@ -74,7 +74,7 @@ Then we save the sentiment labels with the following format
 ```
 For more details, we provide the description of our pre-training data files in **src/data/jsons/MVSA_descriptions.txt** which explains the files defined in **src/data/jsons/MVSA.json**.
 ## Data Download
-Because the pre-training dataset after processing is very large, we only provide the downstream datasets. You can download the downstream datasets and our pre-training model via the link [Baidu Netdist](https://pan.baidu.com/s/11INRcFpoBR-6iggukx1VtA) with code:d0tn or [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing)
+Because the pre-training dataset after processing is very large, we only provide the downstream datasets. You can download the downstream datasets and our pre-training model via [Baidu Netdist](https://pan.baidu.com/s/11INRcFpoBR-6iggukx1VtA) with code:d0tn or [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing)
 ## Pre-Training
 If you have done all the processing above, you can perform the pre-training by running the code as follows.
 ```
