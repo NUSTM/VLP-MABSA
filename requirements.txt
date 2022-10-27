@@ -1,3 +1,4 @@
+pytorch==1.6.0
 transformers==3.4.0
 fastnlp
 h5py

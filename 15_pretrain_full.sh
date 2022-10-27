@@ -1,4 +1,4 @@
-for sl in  '7e-5'#You can change the sl to find the best hyperparameter.
+for sl in  '7e-5' #You can change the sl to find the best hyperparameter.
 do
 		echo ${sl}
 		python MAESC_training.py \
