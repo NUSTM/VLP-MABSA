@@ -80,8 +80,13 @@ class MultiModalBartModel_AESC(PretrainedBartModel):
         self.causal_mask = causal_mask.triu(diagonal=1)
         self.encoder = multimodal_encoder
         only_sc = False
-        need_tag = True  #if predict the sentiment or not
-
+        # need_tag = True  #if predict the sentiment or not
+        if args.task == 'twitter_ae':
+            need_tag = False
+        else:
+            need_tag = True
+            if args.task == 'twitter_sc':
+                only_sc = True
         self.decoder = MultiModalBartDecoder_span(self.config,
                                                   tokenizer,
                                                   share_decoder,

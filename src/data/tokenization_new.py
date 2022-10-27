@@ -38,10 +38,10 @@ class ConditionTokenizer:
                  senti_token='<<senti>>',
                  ANP_token='<<ANP>>',
                  ANP_generate_token='<<AOG>>'):
-        # self._base_tokenizer = BartTokenizer.from_pretrained(
-        #     pretrained_model_name, )
-        self._base_tokenizer = AutoTokenizer.from_pretrained(
+        self._base_tokenizer = BartTokenizer.from_pretrained(
             pretrained_model_name, )
+        # self._base_tokenizer = AutoTokenizer.from_pretrained(
+        #     pretrained_model_name)
 
         self.additional_special_tokens = [
             cls_token, mlm_token, mrm_token, begin_text, end_text, img_feat,
