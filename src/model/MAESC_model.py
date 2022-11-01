@@ -85,8 +85,8 @@ class MultiModalBartModel_AESC(PretrainedBartModel):
             need_tag = False
         else:
             need_tag = True
-            if args.task == 'twitter_sc':
-                only_sc = True
+            # if args.task == 'twitter_sc':
+            #     only_sc = True
         self.decoder = MultiModalBartDecoder_span(self.config,
                                                   tokenizer,
                                                   share_decoder,

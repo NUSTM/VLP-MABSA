@@ -97,9 +97,14 @@ class SequenceGeneratorModel(nn.Module):
                                                  attention_mask)
         tgt_tokens = aesc_infos['labels'].to(input_ids.device)
         # print()
-        result = self.generator.generate(
-            state,
-            tokens=tgt_tokens[:, :3])  # the prompt is provided to the model
+        if self.sc_only:
+            result = self.generator.generate(state,
+                                             tokens=tgt_tokens[:, :3],
+                                             gt_tokens=tgt_tokens)
+        else:
+            result = self.generator.generate(
+                state, tokens=tgt_tokens[:, :3]
+            )  # the prompt is provided to the model
         return result
 
 

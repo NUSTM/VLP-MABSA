@@ -169,6 +169,14 @@ class Collator:
                     target, [x['aspect_spans'] for x in batch],
                     [x['opinion_spans'] for x in batch])
                 output['task'] = 'AE_OE'
+            if self._twitter_ae_enabled:
+                output['TWITTER_AE'] = self._tokenizer.encode_twitter_ae(
+                    target, [x['aesc_spans'] for x in batch],
+                    self._max_span_len)
+            if self._twitter_sc_enabled:
+                output['TWITTER_SC'] = self._tokenizer.encode_twitter_sc(
+                    target, [x['aesc_spans'] for x in batch],
+                    self._max_span_len)
 
         output['image_id'] = [x['image_id'] for x in batch]
         output['gt'] = [x['gt'] for x in batch]

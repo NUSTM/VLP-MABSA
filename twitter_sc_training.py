@@ -165,11 +165,7 @@ def main(rank, args):
                                   twitter_sc_enabled=True,
                                   text_only=args.text_only)
 
-    train_dataset = Twitter_Dataset(args.dataset[0][1],
-                                    split='train',
-                                    is_sample=args.is_sample,
-                                    sample_num=args.sample_num,
-                                    start_idx=args.start_idx)
+    train_dataset = Twitter_Dataset(args.dataset[0][1], split='train')
 
     dev_dataset = Twitter_Dataset(args.dataset[0][1], split='dev')
     test_dataset = Twitter_Dataset(args.dataset[0][1], split='test')
@@ -228,7 +224,7 @@ def main(rank, args):
             res_dev = eval_utils.eval(args, model, dev_loader, metric, device)
             res_test = eval_utils.eval(args, model, test_loader, metric,
                                        device)
-            print('sc_all_num', res_test['sc_all_num'])
+            # print('sc_all_num', res_test['sc_all_num'])
             logger.info('DEV  ae_p:{} ae_r:{} ae_f:{}'.format(
                 res_dev['ae_pre'], res_dev['ae_rec'], res_dev['ae_f']))
             logger.info('DEV  sc_p:{} sc_r:{} sc_f:{}'.format(

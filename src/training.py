@@ -125,8 +125,18 @@ def fine_tune(epoch,
 
     for i, batch in enumerate(train_loader):
         # Forward pass
-
-        aesc_infos = {key: value for key, value in batch['AESC'].items()}
+        if args.task == 'twitter_ae':
+            aesc_infos = {
+                key: value
+                for key, value in batch['TWITTER_AE'].items()
+            }
+        elif args.task == 'twitter_sc':
+            aesc_infos = {
+                key: value
+                for key, value in batch['TWITTER_SC'].items()
+            }
+        else:
+            aesc_infos = {key: value for key, value in batch['AESC'].items()}
         with autocast(enabled=args.amp):
             loss = model.forward(
                 input_ids=batch['input_ids'].to(device),

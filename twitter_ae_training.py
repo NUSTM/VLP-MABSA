@@ -165,11 +165,7 @@ def main(rank, args):
                                   twitter_ae_enabled=True,
                                   text_only=args.text_only)
 
-    train_dataset = Twitter_Dataset(args.dataset[0][1],
-                                    split='train',
-                                    is_sample=args.is_sample,
-                                    sample_num=args.sample_num,
-                                    start_idx=args.start_idx)
+    train_dataset = Twitter_Dataset(args.dataset[0][1], split='train')
 
     dev_dataset = Twitter_Dataset(args.dataset[0][1], split='dev')
     test_dataset = Twitter_Dataset(args.dataset[0][1], split='test')

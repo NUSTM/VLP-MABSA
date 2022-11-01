@@ -16,5 +16,5 @@ python twitter_sc_training.py \
           --seed 42 \
           --text_only 0 \
           --task twitter_sc \
-          --checkpoint ./checkpoint/pytorch_model.bin 
+         --checkpoint ./checkpoint/pytorch_model.bin
 done

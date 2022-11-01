@@ -19,7 +19,7 @@ class ConditionTokenizer:
     """
     def __init__(self,
                  args,
-                 pretrained_model_name='facebook/bart-base',
+                 pretrained_model_name='./E2E-MABSA',
                  cls_token="<<cls>>",
                  mlm_token="<<mlm>>",
                  mrm_token="<<mrm>>",
@@ -28,6 +28,7 @@ class ConditionTokenizer:
                  img_feat='<<img_feat>>',
                  begin_img="<<img>>",
                  end_img="<</img>>",
+                 ae_token='<<AE>>',
                  sc_token='<<SC>>',
                  ae_oe_token="<<AOE>>",
                  sep_token="<<SEP>>",
@@ -47,7 +48,7 @@ class ConditionTokenizer:
             cls_token, mlm_token, mrm_token, begin_text, end_text, img_feat,
             begin_img, end_img, senti_token, ANP_token, ANP_generate_token,
             pos_token, neu_token, neg_token, ae_oe_token, sep_token,
-            aesc_token, sc_token
+            aesc_token, ae_token, sc_token
         ]
         unique_no_split_tokens = self._base_tokenizer.unique_no_split_tokens
         self._base_tokenizer.unique_no_split_tokens = unique_no_split_tokens + self.additional_special_tokens
@@ -63,6 +64,7 @@ class ConditionTokenizer:
         self.begin_img = begin_img
         self.end_img = end_img
 
+        self.ae_token = ae_token
         self.sc_token = sc_token
         self.ae_oe_token = ae_oe_token
         self.sep_token = sep_token
@@ -84,6 +86,7 @@ class ConditionTokenizer:
         self.begin_img_id = self.convert_tokens_to_ids(begin_img)
         self.end_img_id = self.convert_tokens_to_ids(end_img)
 
+        self.ae_token_id = self.convert_tokens_to_ids(ae_token)
         self.sc_token_id = self.convert_tokens_to_ids(sc_token)
         self.ae_oe_token_id = self.convert_tokens_to_ids(ae_oe_token)
         self.sep_token_id = self.convert_tokens_to_ids(sep_token)
@@ -113,12 +116,27 @@ class ConditionTokenizer:
         if args.task == 'pretrain':
             self.mapping = {'AE_OE': '<<AOE>>', 'SEP': '<<SEP>>'}
         else:
-            self.mapping = {
-                'AESC': '<<AESC>>',
-                'POS': '<<POS>>',
-                'NEU': '<<NEU>>',
-                'NEG': '<<NEG>>'
-            }
+            if args.task == 'twitter_sc':
+                self.mapping = {
+                    'SC': '<<SC>>',
+                    'POS': '<<POS>>',
+                    'NEU': '<<NEU>>',
+                    'NEG': '<<NEG>>'
+                }
+            elif args.task == 'twitter_ae':
+                self.mapping = {
+                    'AE': '<<AE>>',
+                    'POS': '<<POS>>',
+                    'NEU': '<<NEU>>',
+                    'NEG': '<<NEG>>'
+                }
+            else:
+                self.mapping = {
+                    'AESC': '<<AESC>>',
+                    'POS': '<<POS>>',
+                    'NEU': '<<NEU>>',
+                    'NEG': '<<NEG>>'
+                }
         self.senti = {'POS': '<<POS>>', 'NEU': '<<NEU>>', 'NEG': '<<NEG>>'}
         self.senti2id = {}
         for key, value in self.senti.items():
@@ -143,7 +161,9 @@ class ConditionTokenizer:
 
     def pad_tokens(self, tokens):
         max_len = max([len(x) for x in tokens])
-        pad_result = torch.full((len(tokens), max_len), self.pad_token_id)
+        pad_result = torch.full((len(tokens), max_len),
+                                self.pad_token_id,
+                                dtype=torch.long)
         mask = torch.zeros(pad_result.size(), dtype=torch.bool)
         for i, x in enumerate(tokens):
             pad_result[i, :len(x)] = torch.tensor(tokens[i], dtype=torch.long)
@@ -504,6 +524,140 @@ class ConditionTokenizer:
             'mrm_decoder_input_ids': mrm_decoder_input_ids,
             'mrm_decoder_attention_mask': mrm_decoder_attention_mask
         }
+        return output
+
+    def encode_twitter_ae(self, label, aspect_spans, ae_max_len):
+        target_shift = len(self.mapping2targetid) + 2
+        ae_text = []
+        masks = []
+        gt_spans = []
+        for text, span in zip(label, aspect_spans):
+            word_bpes = [[self.begin_text_id]]
+            for word in text.split():
+                bpes = self._base_tokenizer.tokenize(word,
+                                                     add_prefix_space=True)
+                bpes = self._base_tokenizer.convert_tokens_to_ids(bpes)
+                word_bpes.append(bpes)
+            word_bpes.append([self.end_text_id])
+
+            lens = list(map(len, word_bpes))
+            cum_lens = np.cumsum(list(lens)).tolist()
+            # self.all_cum_lens.append(cum_lens)
+            # print(len(cum_lens), len(split))
+            cur_text = [
+                0, self.mapping2targetid['AE'], self.mapping2targetid['AE']
+            ]
+            mask = [0, 0, 0]
+            # print(text)
+            # print(len(cum_lens), len(text.split()))
+            gt = []
+            for x in span:
+
+                s_bpe = cum_lens[x[0]] + target_shift
+                e_bpe = cum_lens[x[1] - 1] + target_shift
+                cur_text.append(s_bpe)
+                cur_text.append(e_bpe)
+                gt.append((s_bpe, e_bpe))
+                mask.append(1)
+                mask.append(1)
+            cur_text.append(1)
+            mask.append(1)
+            # cur_text = cur_text + [
+            #     1 for i in range(ae_max_len - len(cur_text))
+            # ]
+            # mask = mask + [0 for i in range(ae_max_len - len(mask))]
+            # print(cur_text)
+            ae_text.append(cur_text)
+            masks.append(mask)
+            gt_spans.append(gt)
+        span_max_len = max(len(x) for x in ae_text)
+        for i in range(len(masks)):
+            add_len = span_max_len - len(masks[i])
+            masks[i] = masks[i] + [0 for ss in range(add_len)]
+            ae_text[i] = ae_text[i] + [1 for ss in range(add_len)]
+        output = {}
+        output['labels'] = torch.tensor(ae_text)
+        output['masks'] = torch.tensor(masks)
+        output['spans'] = gt_spans
+        # output['AE_masks'][:, 2] = 1
+
+        return output
+
+    def encode_twitter_sc(self, label, aesc_spans, aesc_max_len):
+        target_shift = len(self.mapping2targetid) + 2
+        aesc_text = []
+        masks = []
+        gt_spans = []
+        # print(len(opinion_spans))
+        # print(len(self.all_cum_lens), len(opinion_spans))
+
+        flag = True
+        for text, span in zip(label, aesc_spans):
+            span = sorted(span, key=cmp_to_key(cmp))
+            word_bpes = [[self.begin_text_id]]
+            for word in text.split():
+                bpes = self._base_tokenizer.tokenize(word,
+                                                     add_prefix_space=True)
+                bpes = self._base_tokenizer.convert_tokens_to_ids(bpes)
+                word_bpes.append(bpes)
+            word_bpes.append([self.end_text_id])
+
+            lens = list(map(len, word_bpes))
+            cum_lens = np.cumsum(list(lens)).tolist()
+
+            # if flag:
+            #     # print(word_bpes)
+            #     print(cum_lens)
+            #     flag = False
+            cur_text = [
+                0, self.mapping2targetid['SC'], self.mapping2targetid['SC']
+            ]
+            mask = [0, 0, 0]
+            # print(text)
+            # print(len(cum_lens), len(text.split()))
+            gt = []
+            for x in span:
+
+                s_bpe = cum_lens[x[0]] + target_shift
+                e_bpe = cum_lens[x[1] - 1] + target_shift
+                # if s_bpe >= cum_lens[-1] or e_bpe >= cum_lens[-1]:
+                #     break
+                polarity = self.mapping2targetid[x[2]]
+                cur_text.append(s_bpe)
+                cur_text.append(e_bpe)
+                cur_text.append(polarity)
+                gt.append((s_bpe, e_bpe, polarity))
+                mask.append(1)
+                mask.append(1)
+                mask.append(1)
+            cur_text.append(1)
+            mask.append(0)
+            # cur_text = cur_text + [
+            #     1 for i in range(aesc_max_len - len(cur_text))
+            # ]
+            # mask = mask + [0 for i in range(aesc_max_len - len(mask))]
+            # print(cur_text)
+            aesc_text.append(cur_text)
+            gt_spans.append(gt)
+            masks.append(mask)
+        span_max_len = max([len(x) for x in aesc_text])
+        for i in range(len(masks)):
+            add_len = span_max_len - len(masks[i])
+            masks[i] = masks[i] + [0 for ss in range(add_len)]
+            aesc_text[i] = aesc_text[i] + [1 for ss in range(add_len)]
+            # masks[i].extend([0 for ss in range(add_len)])
+            # aesc_text[i].extend([1 for ss in range(add_len)])
+
+        output = {}
+        # print(oe_text[0], len(oe_text))
+        # for xx in oe_text:
+        #     if xx == None:
+        #         print('opinion shit!!!!!!!!!!!!!!!')
+        # print(aesc_text[0])
+        # print(masks[0])
+        output['labels'] = torch.tensor(aesc_text)
+        output['masks'] = torch.tensor(masks)
+        output['spans'] = gt_spans
         return output
 
     def decode(self, token_ids, skip_special_tokens=False):
