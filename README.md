@@ -9,7 +9,7 @@ ylin@njust.edu.cn
 
 --------------update--------------
 
-2023.3.15 Add labels files of pre-training tasks and provide 3 samples of MVSA dataset after processing by the following steps.
+2023.3.15 Add labels files of pre-training tasks and provide 3 samples of MVSA dataset after processing by the following steps in [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing).
 
 2022.12.2 Add training files of subtasks.
 
