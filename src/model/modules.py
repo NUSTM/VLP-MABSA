@@ -273,10 +273,10 @@ class MultiModalBartDecoder_span(nn.Module
             tag_scores = F.linear(
                 hidden_state,
                 self.dropout_layer(
-                    self.decoder.embed_tokens.
-                    weight[self.label_start_id:self.label_start_id +
-                           3]))  # bsz x max_len x num_class
-            logits[:, :, 3:self.src_start_index] = tag_scores
+                    self.decoder.embed_tokens.weight[self.label_start_id:self.
+                                                     label_end_id])
+            )  # bsz x max_len x num_class
+            logits[:, :, 2:self.src_start_index] = tag_scores
         if not only_sc:
             eos_scores = F.linear(
                 hidden_state,

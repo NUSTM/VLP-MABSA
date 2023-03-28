@@ -47,8 +47,8 @@ class ConditionTokenizer:
         self.additional_special_tokens = [
             cls_token, mlm_token, mrm_token, begin_text, end_text, img_feat,
             begin_img, end_img, senti_token, ANP_token, ANP_generate_token,
-            pos_token, neu_token, neg_token, ae_oe_token, sep_token,
-            aesc_token, ae_token, sc_token
+            aesc_token, pos_token, neu_token, neg_token, ae_oe_token, sep_token,
+             ae_token, sc_token
         ]
         unique_no_split_tokens = self._base_tokenizer.unique_no_split_tokens
         self._base_tokenizer.unique_no_split_tokens = unique_no_split_tokens + self.additional_special_tokens
