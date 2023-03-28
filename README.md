@@ -7,6 +7,12 @@ Yan Ling
 
 ylin@njust.edu.cn
 
+--------------update--------------
+
+2023.3.15 Add labels files of pre-training tasks and provide 3 samples of MVSA dataset after processing by the following steps in [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing).
+
+2022.12.2 Add training files of subtasks.
+
 ## Data Processing
 The pre-training dataset we use is MVSA-Multi. You can get from this [git](https://github.com/xunan0812/MultiSentiNet). At first, you need to use the judgement rules provided by the git to remove the samples with inconsistent labels.
 ### Text Processing
