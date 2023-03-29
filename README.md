@@ -10,7 +10,8 @@ ylin@njust.edu.cn
 --------------update--------------
 
 2323.03.29 Add full image features and pretraining-labels to [Google Drive](https://drive.google.com/file/d/14Dum0b4gX94OyEkbrz8q72-MzXGVH8OE/view?usp=share_link)
-2023.3.15 Add labels files of pre-training tasks and provide 3 samples of MVSA dataset after processing by the following steps in [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing).
+
+2023.03.15 Add labels files of pre-training tasks and provide 3 samples of MVSA dataset after processing by the following steps in [Google Drive](https://drive.google.com/drive/folders/1rm0FtHOTMUfZfRjWIE9Ukn_1D5MDXQy3?usp=sharing).
 
 2022.12.2 Add training files of subtasks.
 
