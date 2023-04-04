@@ -19,7 +19,7 @@ class ConditionTokenizer:
     """
     def __init__(self,
                  args,
-                 pretrained_model_name='./E2E-MABSA',
+                 pretrained_model_name='facebook/bart-base',
                  cls_token="<<cls>>",
                  mlm_token="<<mlm>>",
                  mrm_token="<<mrm>>",
